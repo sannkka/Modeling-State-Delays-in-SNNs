@@ -1,6 +1,13 @@
-"""
-This code is based on the Sparch package https://github.com/idiap/sparch
-"""
+#
+# SPDX-FileCopyrightText: Copyright © 2022 Idiap Research Institute <contact@idiap.ch>
+#
+# SPDX-FileContributor: Alexandre Bittar <abittar@idiap.ch>
+#
+# SPDX-License-Identifier: BSD-3-Clause
+#
+# This file is part of the sparch package
+# Modified by Sanja Karilanova, 2025.
+
 import numpy as np
 import torch
 import torch.nn as nn
