@@ -1,6 +1,6 @@
 # Modeling-State-Delays-in-SNNs
 
-Paper available at [TODO].  
+Paper available at [TODO]. If you use this code, please cite our paper. 
 
 
 ## Code acknowledgement

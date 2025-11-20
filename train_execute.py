@@ -30,12 +30,6 @@ set_seed = args.set_seed
 neuron_type = args.neuron_type
 h = args.h
 
-# delay_parametrization = 'ones'
-# delay_order = 0
-# delay_parametrization_trainable = False
-# set_seed = 0
-# neuron_type = 'adLIF'
-
 
 if __name__ == "__main__":
 
@@ -47,8 +41,7 @@ if __name__ == "__main__":
                   f'h{h}__'
                   f'Seed{set_seed}')
 
-    print(f'MODEL NAME: {model_name}')
-    save_file_path = f'/mimer/NOBACKUP/groups/snn/time_varying_project/saved_models/Delays/after_HPO/{model_name}.pkl'
+    save_file_path = f'/saved_models/{model_name}.pkl'
     nb_epochs = 50
 
     # Initialize network
