@@ -16,16 +16,16 @@ def str2bool(v: str) -> bool:
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--set_seed', type=int, required=True)
-parser.add_argument('--delay_parametrization', type=str, required=True)
+parser.add_argument('--delay_param', type=str, required=True)
 parser.add_argument('--delay_order', type=int, required=True)
 parser.add_argument('--h', type=int, required=True)
-parser.add_argument('--delay_parametrization_trainable', type=str2bool, required=True)
+parser.add_argument('--delay_param_trainable', type=str2bool, required=True)
 parser.add_argument('--neuron_type', type=str, required=True)
 args = parser.parse_args()
 
-delay_parametrization = args.delay_parametrization  # 'rand', 'ones', "decay_exp" "decay_lin"
+delay_param = args.delay_param  # 'rand', 'ones', "decay_exp" "decay_lin"
 delay_order = args.delay_order
-delay_parametrization_trainable = args.delay_parametrization_trainable
+delay_param_trainable = args.delay_param_trainable
 set_seed = args.set_seed
 neuron_type = args.neuron_type
 h = args.h
@@ -35,8 +35,8 @@ if __name__ == "__main__":
 
     # For saving
     model_name = (f'nd{delay_order}__'
-                  f'Ad{delay_parametrization}__'
-                  f'AdTrain{delay_parametrization_trainable}__'
+                  f'Ad{delay_param}__'
+                  f'AdTrain{delay_param_trainable}__'
                   f'Neuron{neuron_type}__'
                   f'h{h}__'
                   f'Seed{set_seed}')
@@ -53,8 +53,8 @@ if __name__ == "__main__":
 
                      neuron_type=neuron_type,
                      delay_order=delay_order,
-                     delay_parametrization=delay_parametrization,
-                     delay_parametrization_trainable=delay_parametrization_trainable,
+                     delay_param=delay_param,
+                     delay_param_trainable=delay_param_trainable,
                      set_seed=set_seed,
 
                      # After HPO

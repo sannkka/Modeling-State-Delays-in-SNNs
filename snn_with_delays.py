@@ -6,7 +6,11 @@
 # SPDX-License-Identifier: BSD-3-Clause
 #
 # This file is part of the sparch package
-# Modified by Sanja Karilanova, 2025.
+#
+# Added delay property by Sanja Karilanova in 2025. See paper [X].
+# For each neuron additional delay variable (dt) added to the ut state variable.
+# The user can choose the 'delay_order' as any positive integer, and the delay_param as: 'rand', 'ones', 
+# 'decay_exp' or 'decay_lin'. The matrix 'M' in the code corresponds to A_{sd} in the paper.
 
 import numpy as np
 import torch
@@ -101,8 +105,8 @@ class SNN(nn.Module):
         layer_sizes,
         set_seed=42,
         delay_order=1,
-        delay_parametrization='rand',
-        delay_parametrization_trainable=False,
+        delay_param='rand',
+        delay_param_trainable=False,
         neuron_type="LIF",
         threshold=1.0,
         dropout=0.0,
@@ -123,13 +127,13 @@ class SNN(nn.Module):
         self.threshold = threshold
         self.dropout = dropout
         self.normalization = normalization
-        self.delay_parametrization_trainable = delay_parametrization_trainable
+        self.delay_param_trainable = delay_param_trainable
         self.use_bias = use_bias
         self.bidirectional = bidirectional
         self.use_readout_layer = use_readout_layer
         self.is_snn = True
         self.delay_order = delay_order
-        self.delay_parametrization = delay_parametrization
+        self.delay_param = delay_param
         self.set_seed = set_seed
 
         if neuron_type not in ["LIF", "adLIF", "RLIF", "RadLIF"]:
@@ -167,8 +171,8 @@ class SNN(nn.Module):
                     use_bias=self.use_bias,
                     bidirectional=self.bidirectional,
                     delay_order=self.delay_order,
-                    delay_parametrization=self.delay_parametrization,
-                    delay_parametrization_trainable=self.delay_parametrization_trainable,
+                    delay_param=self.delay_param,
+                    delay_param_trainable=self.delay_param_trainable,
                 )
             )
             input_size = self.layer_sizes[i] * (1 + self.bidirectional)
@@ -241,8 +245,8 @@ class LIFLayer(nn.Module):
         use_bias=False,
         bidirectional=False,
         delay_order=0,
-        delay_parametrization='rand',
-        delay_parametrization_trainable=False,
+        delay_param='rand',
+        delay_param_trainable=False,
     ):
         super().__init__()
 
@@ -283,26 +287,26 @@ class LIFLayer(nn.Module):
                                                        device=self.alpha.device)
 
             # Define delay SSM parametrization
-            if delay_parametrization == 'rand':
+            if delay_param == 'rand':
                 M = torch.rand(self.delay_order, self.hidden_size)
 
-            elif delay_parametrization == 'ones':
+            elif delay_param == 'ones':
                 M = torch.ones(self.delay_order, self.hidden_size)
 
-            elif delay_parametrization == 'decay_exp':
+            elif delay_param == 'decay_exp':
                 decay_rate = 0.5
                 i = torch.arange(self.delay_order)
                 v = torch.exp(-decay_rate * i)
                 M = v.view(self.delay_order, 1).expand(self.delay_order, self.hidden_size)
 
-            elif delay_parametrization == 'decay_lin':
+            elif delay_param == 'decay_lin':
                 v = torch.arange(self.delay_order, 0, -1) / self.delay_order
                 M = v.view(self.delay_order, 1).expand(self.delay_order, self.hidden_size)
 
             else:
-                raise ValueError('unrecognized delay_parametrization argument')
+                raise ValueError('unrecognized delay_param argument')
 
-            if delay_parametrization_trainable is True:
+            if delay_param_trainable is True:
                 self.M = nn.Parameter(M)
             else:
                 self.M = M
@@ -412,8 +416,8 @@ class adLIFLayer(nn.Module):
         hidden_size,
         batch_size,
         delay_order=0,
-        delay_parametrization='rand',
-        delay_parametrization_trainable=False,
+        delay_param='rand',
+        delay_param_trainable=False,
         threshold=1.0,
         dropout=0.0,
         normalization="batchnorm",
@@ -466,26 +470,26 @@ class adLIFLayer(nn.Module):
                                                        device=self.alpha.device)
 
             # Define delay SSM parametrization
-            if delay_parametrization == 'rand':
+            if delay_param == 'rand':
                 M = torch.rand(self.delay_order, self.hidden_size)
 
-            elif delay_parametrization == 'ones':
+            elif delay_param == 'ones':
                 M = torch.ones(self.delay_order, self.hidden_size)
 
-            elif delay_parametrization == 'decay_exp':
+            elif delay_param == 'decay_exp':
                 decay_rate = 0.5
                 i = torch.arange(self.delay_order)
                 v = torch.exp(-decay_rate * i)
                 M = v.view(self.delay_order, 1).expand(self.delay_order, self.hidden_size)
 
-            elif delay_parametrization == 'decay_lin':
+            elif delay_param == 'decay_lin':
                 v = torch.arange(self.delay_order, 0, -1) / self.delay_order
                 M = v.view(self.delay_order, 1).expand(self.delay_order, self.hidden_size)
 
             else:
-                raise ValueError('unrecognized delay_parametrization argument')
+                raise ValueError('unrecognized delay_param argument')
 
-            if delay_parametrization_trainable is True:
+            if delay_param_trainable is True:
                 self.M = nn.Parameter(M)
             else:
                 self.M = M
@@ -619,8 +623,8 @@ class RLIFLayer(nn.Module):
         use_bias=False,
         bidirectional=False,
         delay_order=0,
-        delay_parametrization='rand',
-        delay_parametrization_trainable=False,
+        delay_param='rand',
+        delay_param_trainable=False,
 
     ):
         super().__init__()
@@ -665,26 +669,26 @@ class RLIFLayer(nn.Module):
                                                        device=self.alpha.device)
 
             # Define delay SSM parametrization
-            if delay_parametrization == 'rand':
+            if delay_param == 'rand':
                 M = torch.rand(self.delay_order, self.hidden_size)
 
-            elif delay_parametrization == 'ones':
+            elif delay_param == 'ones':
                 M = torch.ones(self.delay_order, self.hidden_size)
 
-            elif delay_parametrization == 'decay_exp':
+            elif delay_param == 'decay_exp':
                 decay_rate = 0.5
                 i = torch.arange(self.delay_order)
                 v = torch.exp(-decay_rate * i)
                 M = v.view(self.delay_order, 1).expand(self.delay_order, self.hidden_size)
 
-            elif delay_parametrization == 'decay_lin':
+            elif delay_param == 'decay_lin':
                 v = torch.arange(self.delay_order, 0, -1) / self.delay_order
                 M = v.view(self.delay_order, 1).expand(self.delay_order, self.hidden_size)
 
             else:
-                raise ValueError('unrecognized delay_parametrization argument')
+                raise ValueError('unrecognized delay_param argument')
 
-            if delay_parametrization_trainable is True:
+            if delay_param_trainable is True:
                 self.M = nn.Parameter(M)
             else:
                 self.M = M
@@ -797,8 +801,8 @@ class RadLIFLayer(nn.Module):
         hidden_size,
         batch_size,
         delay_order=0,
-        delay_parametrization='rand',
-        delay_parametrization_trainable=False,
+        delay_param='rand',
+        delay_param_trainable=False,
         threshold=1.0,
         dropout=0.0,
         normalization="batchnorm",
@@ -847,26 +851,26 @@ class RadLIFLayer(nn.Module):
                                                        device=self.alpha.device)
 
             # Define delay SSM parametrization
-            if delay_parametrization == 'rand':
+            if delay_param == 'rand':
                 M = torch.rand(self.delay_order, self.hidden_size)
 
-            elif delay_parametrization == 'ones':
+            elif delay_param == 'ones':
                 M = torch.ones(self.delay_order, self.hidden_size)
 
-            elif delay_parametrization == 'decay_exp':
+            elif delay_param == 'decay_exp':
                 decay_rate = 0.5
                 i = torch.arange(self.delay_order)
                 v = torch.exp(-decay_rate * i)
                 M = v.view(self.delay_order, 1).expand(self.delay_order, self.hidden_size)
 
-            elif delay_parametrization == 'decay_lin':
+            elif delay_param == 'decay_lin':
                 v = torch.arange(self.delay_order, 0, -1) / self.delay_order
                 M = v.view(self.delay_order, 1).expand(self.delay_order, self.hidden_size)
 
             else:
-                raise ValueError('unrecognized delay_parametrization argument')
+                raise ValueError('unrecognized delay_param argument')
 
-            if delay_parametrization_trainable is True:
+            if delay_param_trainable is True:
                 self.M = nn.Parameter(M)
             else:
                 self.M = M
