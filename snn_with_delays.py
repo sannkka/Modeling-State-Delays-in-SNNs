@@ -7,7 +7,10 @@
 #
 # This file is part of the sparch package
 #
-# Added delay property by Sanja Karilanova in 2025. See paper [X].
+# Added delay property by Sanja Karilanova in 2025.
+# See paper "Delays in Spiking Neural Networks: A State Space Model Approach"
+# By Sanja Karilanova, Subhrakanti Dey, Ayça Özçelikkale
+# Pre-print available at http://arxiv.org/abs/2512.01906.
 # For each neuron additional delay variable (dt) added to the ut state variable.
 # The user can choose the 'delay_order' as any positive integer, and the delay_param as: 'rand', 'ones', 
 # 'decay_exp' or 'decay_lin'. The matrix 'M' in the code corresponds to A_{sd} in the paper.
