@@ -1,4 +1,4 @@
-## Delays in Spiking Neural Networks: A State Space Model Approach
+# Delays in Spiking Neural Networks: A State Space Model Approach
 
 Pre-print available at http://arxiv.org/abs/2512.01906. 
 If you use this code, please cite our paper.
