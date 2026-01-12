@@ -13,6 +13,8 @@ train_loader, test_loader = get_data_loaders(
         batch_size=batch_size,
         cache_dir=path_server,
         num_workers=4,
+
+        # below params might be not used in practise if transformations are commented out
         time_jitter=1.0,
         spatial_jitter=0.55,
         time_skew=1.2,

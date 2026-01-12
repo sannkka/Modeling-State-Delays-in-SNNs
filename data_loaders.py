@@ -20,12 +20,12 @@ def get_data_loaders(
     sensor_size = (700, 1, 1)
 
     train_transforms = tonic.transforms.Compose([
-        tonic.transforms.DropEvent(p=drop_event),
-        # DropEventChunk(p=0.3, max_drop_size=max_drop_chunk),
-        # Jitter1D(sensor_size=sensor_size, var=spatial_jitter),
-        tonic.transforms.TimeSkew(coefficient=(1 / time_skew, time_skew), offset=0),
-        tonic.transforms.TimeJitter(std=time_jitter, clip_negative=False, sort_timestamps=True),
-        tonic.transforms.UniformNoise(sensor_size=sensor_size, n=(0, noise)),
+        # tonic.transforms.DropEvent(p=drop_event),
+        # DropEventChunk(p=0.3, max_drop_size=max_drop_chunk), # not
+        # Jitter1D(sensor_size=sensor_size, var=spatial_jitter),  # not
+        # tonic.transforms.TimeSkew(coefficient=(1 / time_skew, time_skew), offset=0),
+        # tonic.transforms.TimeJitter(std=time_jitter, clip_negative=False, sort_timestamps=True),
+        # tonic.transforms.UniformNoise(sensor_size=sensor_size, n=(0, noise)),
 
         tonic.transforms.MergePolarities(),
         tonic.transforms.ToFrame(sensor_size=(700, 1, 1), time_window=time_window),
